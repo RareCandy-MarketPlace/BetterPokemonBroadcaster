@@ -2,9 +2,9 @@ package com.envyful.better.poke.broadcaster.api.type.impl.type;
 
 import com.envyful.api.neoforge.world.UtilWorld;
 import com.envyful.api.text.Placeholder;
-import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
+import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.battles.BattleResults;
 import com.pixelmonmod.pixelmon.api.events.battles.BattleEndEvent;
@@ -34,10 +34,6 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
         }
 
         if (entity.isBossPokemon() || entity.isRaidPokemon()) {
-            return false;
-        }
-
-        if (entity.isBossPokemon()) {
             return false;
         }
 
@@ -82,14 +78,15 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
         ServerPlayer actualPlayer = getBattlePlayer(event);
         String playerName = actualPlayer != null ? actualPlayer.getName().getString() : "Unknown";
 
-        return BetterPokeBroadcaster.getConfig().getPlaceholderFormat().getPokemonPlaceholders(pixelmon.getPokemon(),
+        return Placeholder.composition(
+                PlaceholderCache.get(pixelmon.getPokemon()),
                 Placeholder.simple(line -> line
                         .replace("%nearest_name%", playerName)
                         .replace("%player%", playerName)
-                        .replace("%x%", pixelmon.getBlockX() + "")
-                        .replace("%y%", pixelmon.getBlockY() + "")
-                        .replace("%z%", pixelmon.getBlockZ() + "")
-                        .replace("%world%", UtilWorld.getName(pixelmon.level()) + "")
+                        .replace("%x%", String.valueOf(pixelmon.getBlockX()))
+                        .replace("%y%", String.valueOf(pixelmon.getBlockY()))
+                        .replace("%z%", String.valueOf(pixelmon.getBlockZ()))
+                        .replace("%world%", UtilWorld.getName(pixelmon.level()))
                         .replace("%pokemon%", pixelmon.getPokemonName())
                         .replace("%pokemon_lower%", pixelmon.getPokemonName().toLowerCase().replace(" ", ""))
                         .replace("%biome%", BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString())));
@@ -97,11 +94,7 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
 
     @Override
     public ServerPlayer findNearestPlayer(BattleEndEvent event, PixelmonEntity entity, double range) {
-        ServerPlayer battlePlayer = getBattlePlayer(event);
-        if (battlePlayer != null) {
-            return battlePlayer;
-        }
-        return (ServerPlayer) entity.level().getNearestPlayer(entity, range);
+        return getBattlePlayer(event);
     }
 
     @SubscribeEvent

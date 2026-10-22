@@ -2,9 +2,9 @@ package com.envyful.better.poke.broadcaster.api.type.impl.type;
 
 import com.envyful.api.neoforge.world.UtilWorld;
 import com.envyful.api.text.Placeholder;
-import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
+import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.battles.BattleEndCause;
 import com.pixelmonmod.pixelmon.api.battles.BattleResults;
@@ -47,29 +47,29 @@ public class FleeBroadcasterType extends AbstractBroadcasterType<BattleEndEvent>
                 return entry.getValue();
             }
         }
-
         return null;
     }
 
     @Override
     protected PixelmonEntity getEntity(BattleEndEvent event) {
         for (BattleParticipant battleParticipant : event.getResults().keySet()) {
-            if (battleParticipant instanceof WildPixelmonParticipant) {
-                return (PixelmonEntity)(battleParticipant).getEntity();
+            if (battleParticipant instanceof WildPixelmonParticipant wild) {
+                return (PixelmonEntity) wild.getEntity();
             }
         }
-
         return null;
     }
 
     @Override
     protected Placeholder asEventPlaceholder(BattleEndEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
-        return BetterPokeBroadcaster.getConfig().getPlaceholderFormat().getPokemonPlaceholders(pixelmon.getPokemon(),
-                Placeholder.simple(line -> line.replace("%nearest_name%", nearestPlayer == null ? "None" : nearestPlayer.getName().getString())
-                        .replace("%x%", pixelmon.getX() + "")
-                        .replace("%y%", pixelmon.getY() + "")
-                        .replace("%z%", pixelmon.getZ() + "")
-                        .replace("%world%", UtilWorld.getName(pixelmon.level()) + "")
+        return Placeholder.composition(
+                PlaceholderCache.get(pixelmon.getPokemon()),
+                Placeholder.simple(line -> line
+                        .replace("%nearest_name%", nearestPlayer == null ? "None" : nearestPlayer.getName().getString())
+                        .replace("%x%", String.valueOf(pixelmon.getBlockX()))
+                        .replace("%y%", String.valueOf(pixelmon.getBlockY()))
+                        .replace("%z%", String.valueOf(pixelmon.getBlockZ()))
+                        .replace("%world%", UtilWorld.getName(pixelmon.level()))
                         .replace("%pokemon%", pixelmon.getPokemonName())
                         .replace("%biome%", BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString())));
     }
@@ -81,5 +81,6 @@ public class FleeBroadcasterType extends AbstractBroadcasterType<BattleEndEvent>
 
     @SubscribeEvent
     public void onBattleEnd(BattleEndEvent event) {
+        BroadcasterUtil.handleEvent(event);
     }
 }

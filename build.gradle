@@ -21,17 +21,23 @@ repositories {
         name = "EnvyWare"
         url = "https://maven.envyware.co.uk/releases"
     }
+    maven {
+        name = "CurseMaven"
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
     flatDir {
         dirs 'libs'
     }
 }
 
 dependencies {
-    implementation files('libs/Pixelmon-1.21.1-9.3.14-universal.jar')
+    shadow "com.envyful.api:commons:7.2.8"
+    compileOnly "curse.maven:pixelmon-389487:8894160"
 
-    compileOnly "com.envyful.papi:api:2.1.0"
-
-    shadow group: 'org.spongepowered', name: 'configurate-yaml', version: '4.2.0-COMMENTS'
+    shadow group: 'org.spongepowered', name: 'configurate-yaml', version: '4.2.0'
 
     shadow (group: 'com.envyful.api', name: 'commons', version: '8.1.9')
     shadow (group: 'com.envyful.api', name: 'neo21', version: '8.1.9') {

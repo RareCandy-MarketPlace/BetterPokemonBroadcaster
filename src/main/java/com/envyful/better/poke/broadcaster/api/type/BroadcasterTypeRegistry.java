@@ -11,7 +11,6 @@ public class BroadcasterTypeRegistry {
     private static final Map<String, BroadcasterType> TYPES = Maps.newHashMap();
 
     public static void init() {
-        register(new DespawnBroadcasterType());
         register(new SpawnBroadcasterType());
         register(new CaptureBroadcasterType());
         register(new DefeatBroadcasterType());

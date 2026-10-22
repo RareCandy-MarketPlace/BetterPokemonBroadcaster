@@ -1,9 +1,9 @@
 package com.envyful.better.poke.broadcaster.api.type.impl.type;
 
 import com.envyful.api.text.Placeholder;
-import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
+import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.events.CaptureEvent;
 import com.pixelmonmod.pixelmon.api.util.helpers.BiomeHelper;
@@ -22,7 +22,6 @@ public class CaptureBroadcasterType extends AbstractBroadcasterType<CaptureEvent
         if (event instanceof CaptureEvent.SuccessfulRaidCapture) {
             return false;
         }
-
         return true;
     }
 
@@ -45,14 +44,15 @@ public class CaptureBroadcasterType extends AbstractBroadcasterType<CaptureEvent
         var biomeName = level != null ? BiomeHelper.getLocalizedBiomeName(level.getBiome(player.blockPosition())).getString() : "Unknown";
         var playerName = player != null ? player.getName().getString() : "Unknown";
 
-        return BetterPokeBroadcaster.getConfig().getPlaceholderFormat().getPokemonPlaceholders(pokemon,
+        return Placeholder.composition(
+                PlaceholderCache.get(pokemon),
                 Placeholder.simple(line -> line
                         .replace("%nearest_name%", playerName)
                         .replace("%player%", playerName)
-                        .replace("%x%", x + "")
-                        .replace("%y%", y + "")
-                        .replace("%z%", z + "")
-                        .replace("%world%", worldName + "")
+                        .replace("%x%", String.valueOf(x))
+                        .replace("%y%", String.valueOf(y))
+                        .replace("%z%", String.valueOf(z))
+                        .replace("%world%", worldName)
                         .replace("%pokemon%", pokemon.getSpecies().getName())
                         .replace("%pokemon_lower%", pokemon.getSpecies().getName().toLowerCase().replace(" ", ""))
                         .replace("%biome%", biomeName)));

@@ -7,7 +7,6 @@ import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.pixelmonmod.api.pokemon.PokemonSpecification;
 import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,30 +14,16 @@ import java.util.List;
 @ConfigSerializable
 public class BroadcastOption extends AbstractYamlConfig {
 
-    @Comment("If this is false then this broadcast option will not be checked. This option is useful for disabling the defaults provided with the mod as you cannot delete those files, only modify them.")
     private boolean enabled = true;
-
-    @Comment("The type of broadcast. This defines when the broadcast will attempt to be sent.")
     private String type;
-
-    @Comment("This is used to check if the Pokemon in the event is the correct Pokemon for this broadcast. For more information read: https://pixelmonmod.com/wiki/Pokemon_spec")
     private PokemonSpecification pokemonSpec;
-
-    @Comment("The radius in blocks that the mod will check for the `nearby player` placeholders and options")
     private double nearestPlayerRadius;
-
-    @Comment("The messages that will be broadcasted when the event is triggered. These messages can contain placeholders.")
     private List<String> broadcasts;
-
-    @Comment("The webhook that will be executed when the event is triggered. This webhook can contain placeholders.")
     private DiscordWebHookConfig webhook;
-
-    @Comment("If this is true then the broadcast will only be sent to the nearest player to the Pokemon that triggered the event.")
     private boolean nearestPlayerOnly;
 
     private BroadcastOption(Builder builder) {
         super();
-
         this.type = builder.type;
         this.pokemonSpec = builder.pokemonSpec;
         this.nearestPlayerRadius = builder.nearestPlayerRadius;
@@ -88,7 +73,6 @@ public class BroadcastOption extends AbstractYamlConfig {
     }
 
     public static class Builder {
-
         private String type;
         private PokemonSpecification pokemonSpec;
         private double nearestPlayerRadius;
