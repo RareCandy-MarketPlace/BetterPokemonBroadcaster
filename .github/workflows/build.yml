@@ -29,6 +29,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Shadow JAR
+        working-directory: neo21
         run: ./gradlew build shadowJar --no-daemon
 
       - name: Upload Compiled JAR
