@@ -29,14 +29,13 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Shadow JAR
-        working-directory: neo21
         run: ./gradlew build shadowJar --no-daemon
 
       - name: Upload Compiled JAR
         uses: actions/upload-artifact@v4
         with:
           name: BetterPokeBroadcaster-NeoForge-1.21.1
-          path: neo21/build/libs/BetterPokeBroadcaster-NeoForge-*.jar
+          path: build/libs/BetterPokeBroadcaster-NeoForge-*.jar
           if-no-files-found: error
 
       - name: Validate Webhook Payload Structure
