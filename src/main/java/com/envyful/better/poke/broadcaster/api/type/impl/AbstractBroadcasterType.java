@@ -2,6 +2,7 @@ package com.envyful.better.poke.broadcaster.api.type.impl;
 
 import com.envyful.api.text.Placeholder;
 import com.envyful.better.poke.broadcaster.api.type.BroadcasterType;
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.Event;
@@ -41,6 +42,12 @@ public abstract class AbstractBroadcasterType<A extends Event> implements Broadc
     @Override
     public PixelmonEntity getPixelmon(Event e) {
         return this.getEntity(this.clazz.cast(e));
+    }
+
+    @Override
+    public Pokemon getPokemon(Event e) {
+        PixelmonEntity entity = this.getPixelmon(e);
+        return entity != null ? entity.getPokemon() : null;
     }
 
     protected abstract PixelmonEntity getEntity(A a);

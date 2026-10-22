@@ -19,11 +19,9 @@ public class BroadcasterUtil {
                 if (broadcasterType == null || !broadcasterType.isCorrectEvent(event)) continue;
 
                 var pixelmon = broadcasterType.getPixelmon(event);
-                Pokemon pokemon = null;
+                Pokemon pokemon = broadcasterType.getPokemon(event);
 
-                if (pixelmon != null) {
-                    pokemon = pixelmon.getPokemon();
-                } else if (event instanceof CaptureEvent.SuccessfulCapture) {
+                if (pokemon == null && event instanceof CaptureEvent.SuccessfulCapture) {
                     pokemon = ((CaptureEvent.SuccessfulCapture) event).getPokemon();
                 }
 
@@ -31,7 +29,6 @@ public class BroadcasterUtil {
 
                 boolean matches = (pixelmon != null) ? option.getSpec().matches(pixelmon) : option.getSpec().matches(pokemon);
                 if (!matches) continue;
-
 
                 if (pixelmon != null && pixelmon.isBossPokemon()) {
                     boolean isBossBroadcast = false;
@@ -43,7 +40,6 @@ public class BroadcasterUtil {
                     }
                     if (!isBossBroadcast) continue;
                 }
-
 
                 var nearestPlayer = broadcasterType.getNearestPlayer(event, pixelmon, option.getNearestPlayerRadius());
                 if (nearestPlayer == null && option.isNearestPlayerOnly()) continue;

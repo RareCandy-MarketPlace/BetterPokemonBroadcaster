@@ -15,6 +15,7 @@ public class BroadcasterTypeRegistry {
         register(new CaptureBroadcasterType());
         register(new DefeatBroadcasterType());
         register(new FleeBroadcasterType());
+        register(new DenSpawnBroadcasterType());
     }
 
     public static void register(BroadcasterType type) {

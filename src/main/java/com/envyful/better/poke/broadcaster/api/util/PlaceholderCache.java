@@ -30,4 +30,8 @@ public class PlaceholderCache {
 
         return placeholder;
     }
+
+    public static void clear() {
+        CACHE.invalidateAll();
+    }
 }

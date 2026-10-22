@@ -17,7 +17,6 @@ import java.util.List;
 public class BetterPokeBroadcasterConfig extends AbstractYamlConfig {
 
     private transient List<BroadcastOption> broadcastOptions;
-
     private SpriteConfig placeholderFormat = new SpriteConfig();
 
     public BetterPokeBroadcasterConfig() throws IOException {
@@ -25,37 +24,37 @@ public class BetterPokeBroadcasterConfig extends AbstractYamlConfig {
 
         this.broadcastOptions = YamlConfigFactory.getInstances(BroadcastOption.class, "config/BetterPokeBroadcaster/broadcasts",
                 DefaultConfig.onlyNew("examples/shiny_spawns.yml", BroadcastOption.builder()
-                                .type("spawn")
-                                .nearestPlayerOnly(false)
-                                .nearestPlayerRadius(100)
-                                .spec("shiny isboss:notboss !leg !ub")
-                                .broadcasts(
-                                        "&8&m---------------------------------",
-                                        " ",
-                                        "       &6&lSHINY SPAWN",
-                                        "   &e%pokemon% &7has spawned at &a%x%&7, &a%y%&7, &a%z%&7 in &f%biome%&7!",
-                                        "   &7The nearest player is &e%nearest_name%&7",
-                                        " ",
-                                        "&8&m---------------------------------"
-                                )
-                                .webhook(DiscordWebHookConfig.builder()
-                                        .disabled()
-                                        .url("YOUR WEBHOOK URL HERE")
-                                        .tts(false)
-                                        .username("EnvyWare Ltd BetterPokeBroadcaster")
-                                        .embeds(DiscordEmbedConfig.builder()
-                                                .color(new DiscordEmbedConfig.DiscordColor(255, 255, 0, 255))
-                                                .author(new DiscordEmbedConfig.Author("EnvyWare Ltd", "https://envyware.co.uk", ""))
-                                                .footer(new DiscordEmbedConfig.Footer("Powered by EnvyWare Ltd", ""))
-                                                .description("A shiny %pokemon% has spawned at %x%, %y%, %z% in %biome%!")
-                                                .fields(new DiscordEmbedConfig.Field("Nearest Player", "%nearest_name%", false),
-                                                        new DiscordEmbedConfig.Field("World", "%world%", false),
-                                                        new DiscordEmbedConfig.Field("Biome", "%biome%", false),
-                                                        new DiscordEmbedConfig.Field("X", "%x%", false),
-                                                        new DiscordEmbedConfig.Field("Y", "%y%", false),
-                                                        new DiscordEmbedConfig.Field("Z", "%z%", false))
-                                                .build())
+                        .type("spawn")
+                        .nearestPlayerOnly(false)
+                        .nearestPlayerRadius(100)
+                        .spec("shiny isboss:notboss !leg !ub")
+                        .broadcasts(
+                                "&8&m---------------------------------",
+                                " ",
+                                "       &6&lSHINY SPAWN",
+                                "   &e%pokemon% &7has spawned at &a%x%&7, &a%y%&7, &a%z%&7 in &f%biome%&7!",
+                                "   &7The nearest player is &e%nearest_name%&7",
+                                " ",
+                                "&8&m---------------------------------"
+                        )
+                        .webhook(DiscordWebHookConfig.builder()
+                                .disabled()
+                                .url("YOUR WEBHOOK URL HERE")
+                                .tts(false)
+                                .username("EnvyWare Ltd BetterPokeBroadcaster")
+                                .embeds(DiscordEmbedConfig.builder()
+                                        .color(new DiscordEmbedConfig.DiscordColor(255, 255, 0, 255))
+                                        .author(new DiscordEmbedConfig.Author("EnvyWare Ltd", "https://envyware.co.uk", ""))
+                                        .footer(new DiscordEmbedConfig.Footer("Powered by EnvyWare Ltd", ""))
+                                        .description("A shiny %pokemon% has spawned at %x%, %y%, %z% in %biome%!")
+                                        .fields(new DiscordEmbedConfig.Field("Nearest Player", "%nearest_name%", false),
+                                                new DiscordEmbedConfig.Field("World", "%world%", false),
+                                                new DiscordEmbedConfig.Field("Biome", "%biome%", false),
+                                                new DiscordEmbedConfig.Field("X", "%x%", false),
+                                                new DiscordEmbedConfig.Field("Y", "%y%", false),
+                                                new DiscordEmbedConfig.Field("Z", "%z%", false))
                                         .build())
+                                .build())
                         .build()
                 ),
                 DefaultConfig.onlyNew("examples/legendary_spawns.yml", BroadcastOption.builder()
@@ -82,6 +81,40 @@ public class BetterPokeBroadcasterConfig extends AbstractYamlConfig {
                                         .author(new DiscordEmbedConfig.Author("EnvyWare Ltd", "https://envyware.co.uk", ""))
                                         .footer(new DiscordEmbedConfig.Footer("Powered by EnvyWare Ltd", ""))
                                         .description("A legendary %pokemon% has spawned at %x%, %y%, %z% in %biome%!")
+                                        .fields(new DiscordEmbedConfig.Field("Nearest Player", "%nearest_name%", false),
+                                                new DiscordEmbedConfig.Field("World", "%world%", false),
+                                                new DiscordEmbedConfig.Field("Biome", "%biome%", false),
+                                                new DiscordEmbedConfig.Field("X", "%x%", false),
+                                                new DiscordEmbedConfig.Field("Y", "%y%", false),
+                                                new DiscordEmbedConfig.Field("Z", "%z%", false))
+                                        .build())
+                                .build())
+                        .build()
+                ),
+                DefaultConfig.onlyNew("examples/legendary_den_spawns.yml", BroadcastOption.builder()
+                        .type("den_spawn")
+                        .nearestPlayerOnly(false)
+                        .nearestPlayerRadius(100)
+                        .spec("legendary")
+                        .broadcasts(
+                                "&8&m---------------------------------",
+                                " ",
+                                "       &5&lLEGENDARY RAID DEN",
+                                "   &d%pokemon% &7has appeared in a Raid Den at &a%x%&7, &a%y%&7, &a%z%&7 in &f%biome%&7!",
+                                "   &7The nearest player is &d%nearest_name%&7",
+                                " ",
+                                "&8&m---------------------------------"
+                        )
+                        .webhook(DiscordWebHookConfig.builder()
+                                .disabled()
+                                .url("YOUR WEBHOOK URL HERE")
+                                .tts(false)
+                                .username("EnvyWare Ltd BetterPokeBroadcaster")
+                                .embeds(DiscordEmbedConfig.builder()
+                                        .color(new DiscordEmbedConfig.DiscordColor(255, 255, 0, 255))
+                                        .author(new DiscordEmbedConfig.Author("EnvyWare Ltd", "https://envyware.co.uk", ""))
+                                        .footer(new DiscordEmbedConfig.Footer("Powered by EnvyWare Ltd", ""))
+                                        .description("A legendary %pokemon% has appeared in a Raid Den at %x%, %y%, %z% in %biome%!")
                                         .fields(new DiscordEmbedConfig.Field("Nearest Player", "%nearest_name%", false),
                                                 new DiscordEmbedConfig.Field("World", "%world%", false),
                                                 new DiscordEmbedConfig.Field("Biome", "%biome%", false),
@@ -170,5 +203,4 @@ public class BetterPokeBroadcasterConfig extends AbstractYamlConfig {
     public SpriteConfig getPlaceholderFormat() {
         return this.placeholderFormat;
     }
-
 }

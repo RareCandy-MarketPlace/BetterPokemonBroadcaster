@@ -6,6 +6,7 @@ import com.envyful.api.neoforge.command.ForgeCommandFactory;
 import com.envyful.api.neoforge.platform.ForgePlatformHandler;
 import com.envyful.api.platform.PlatformProxy;
 import com.envyful.better.poke.broadcaster.api.type.BroadcasterTypeRegistry;
+import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.envyful.better.poke.broadcaster.command.PokeBroadcasterCommand;
 import com.envyful.better.poke.broadcaster.config.BetterPokeBroadcasterConfig;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,18 +24,13 @@ public class BetterPokeBroadcaster {
 
     public static final String MOD_ID = "betterpokebroadcaster";
     private static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-
     private static BetterPokeBroadcaster instance;
-
     private ForgeCommandFactory commandFactory = new ForgeCommandFactory();
-
     private BetterPokeBroadcasterConfig config;
 
     public BetterPokeBroadcaster() {
         PlatformProxy.setHandler(ForgePlatformHandler.getInstance());
-
         PlatformProxy.setTextFormatter(com.envyful.api.neoforge.chat.ComponentTextFormatter.getInstance());
-
         UtilLogger.setLogger(LOGGER);
         instance = this;
         NeoForge.EVENT_BUS.register(this);
@@ -48,6 +44,7 @@ public class BetterPokeBroadcaster {
 
     public static void reloadConfig() {
         try {
+            PlaceholderCache.clear();
             instance.config = YamlConfigFactory.getInstance(BetterPokeBroadcasterConfig.class);
         } catch (IOException e) {
             LOGGER.error("Error loading the config", e);

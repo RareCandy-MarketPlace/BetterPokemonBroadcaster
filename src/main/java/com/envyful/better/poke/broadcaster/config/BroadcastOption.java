@@ -3,12 +3,11 @@ package com.envyful.better.poke.broadcaster.config;
 import com.envyful.api.config.yaml.AbstractYamlConfig;
 import com.envyful.api.discord.yaml.DiscordWebHookConfig;
 import com.envyful.api.text.Placeholder;
-import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
+import com.envyful.better.poke.broadcaster.api.util.WebhookQueue;
 import com.pixelmonmod.api.pokemon.PokemonSpecification;
 import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-import java.io.IOException;
 import java.util.List;
 
 @ConfigSerializable
@@ -56,16 +55,16 @@ public class BroadcastOption extends AbstractYamlConfig {
         return this.broadcasts;
     }
 
+    public DiscordWebHookConfig getWebhook() {
+        return this.webhook;
+    }
+
     public boolean isNearestPlayerOnly() {
         return this.nearestPlayerOnly;
     }
 
     public void executeWebhook(Placeholder... placeholders) {
-        try {
-            this.webhook.execute(placeholders);
-        } catch (IOException e) {
-            BetterPokeBroadcaster.getLogger().error("Failed to execute webhook", e);
-        }
+        WebhookQueue.enqueue(this, placeholders);
     }
 
     public static Builder builder() {

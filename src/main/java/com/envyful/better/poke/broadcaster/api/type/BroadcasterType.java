@@ -1,6 +1,7 @@
 package com.envyful.better.poke.broadcaster.api.type;
 
 import com.envyful.api.text.Placeholder;
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.Event;
@@ -12,6 +13,8 @@ public interface BroadcasterType {
     boolean isCorrectEvent(Event e);
 
     PixelmonEntity getPixelmon(Event e);
+
+    Pokemon getPokemon(Event e);
 
     ServerPlayer getNearestPlayer(Event e, PixelmonEntity entity, double range);
 
