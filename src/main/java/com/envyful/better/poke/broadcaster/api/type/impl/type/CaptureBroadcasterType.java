@@ -65,6 +65,6 @@ public class CaptureBroadcasterType extends AbstractBroadcasterType<CaptureEvent
 
     @SubscribeEvent
     public void onCapture(CaptureEvent.SuccessfulCapture event) {
-        BroadcasterUtil.handleEvent(event);
+        BroadcasterUtil.handleEvent(event, this);
     }
 }

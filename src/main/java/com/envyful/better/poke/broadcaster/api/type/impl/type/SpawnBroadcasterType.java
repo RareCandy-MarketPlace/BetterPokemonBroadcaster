@@ -68,6 +68,6 @@ public class SpawnBroadcasterType extends AbstractBroadcasterType<SpawnEvent> {
 
     @SubscribeEvent
     public void onSpawn(SpawnEvent event) {
-        BroadcasterUtil.handleEvent(event);
+        BroadcasterUtil.handleEvent(event, this);
     }
 }

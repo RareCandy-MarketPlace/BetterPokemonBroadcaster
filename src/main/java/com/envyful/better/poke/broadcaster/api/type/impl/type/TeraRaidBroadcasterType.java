@@ -1,0 +1,26 @@
+package com.envyful.better.poke.broadcaster.api.type.impl.type;
+
+import com.envyful.api.concurrency.UtilConcurrency;
+import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
+import com.pixelmonmod.pixelmon.api.events.raids.RandomizeRaidEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+
+public class TeraRaidBroadcasterType extends BaseRaidBroadcasterType {
+
+    public TeraRaidBroadcasterType() {
+        super("tera_raid");
+    }
+
+    @Override
+    protected boolean isEvent(RandomizeRaidEvent.SelectSpawnsEvent event) {
+        if (event.getDen() == null || !isTeraRaid(event)) {
+            return false;
+        }
+        return resolveRaidPokemon(event) != null;
+    }
+
+    @SubscribeEvent
+    public void onDenRandomize(RandomizeRaidEvent.SelectSpawnsEvent event) {
+        UtilConcurrency.runLater(() -> BroadcasterUtil.handleEvent(event, this), 20L);
+    }
+}

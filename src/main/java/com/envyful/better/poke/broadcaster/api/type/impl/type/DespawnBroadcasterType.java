@@ -23,14 +23,20 @@ import java.util.UUID;
 
 public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveLevelEvent> {
 
-    
+
     private static final Set<UUID> CAPTURED_UUIDS = Collections.newSetFromMap(new LinkedHashMap<UUID, Boolean>() {
-        @Override protected boolean removeEldestEntry(Map.Entry<UUID, Boolean> eldest) { return size() > 100; }
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<UUID, Boolean> eldest) {
+            return size() > 100;
+        }
     });
 
 
     private static final Set<UUID> DESPAWNED_UUIDS = Collections.newSetFromMap(new LinkedHashMap<UUID, Boolean>() {
-        @Override protected boolean removeEldestEntry(Map.Entry<UUID, Boolean> eldest) { return size() > 500; }
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<UUID, Boolean> eldest) {
+            return size() > 500;
+        }
     });
 
     public DespawnBroadcasterType() {
@@ -71,7 +77,9 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
     }
 
     @Override
-    protected PixelmonEntity getEntity(EntityLeaveLevelEvent event) { return (PixelmonEntity) event.getEntity(); }
+    protected PixelmonEntity getEntity(EntityLeaveLevelEvent event) {
+        return (PixelmonEntity) event.getEntity();
+    }
 
     @Override
     protected Placeholder asEventPlaceholder(EntityLeaveLevelEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
@@ -92,5 +100,7 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
     }
 
     @SubscribeEvent
-    public void onEntityLeave(EntityLeaveLevelEvent event) { BroadcasterUtil.handleEvent(event); }
+    public void onEntityLeave(EntityLeaveLevelEvent event) {
+        BroadcasterUtil.handleEvent(event, this);
+    }
 }

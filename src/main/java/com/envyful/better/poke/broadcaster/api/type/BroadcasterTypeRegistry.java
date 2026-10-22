@@ -15,7 +15,8 @@ public class BroadcasterTypeRegistry {
         register(new CaptureBroadcasterType());
         register(new DefeatBroadcasterType());
         register(new FleeBroadcasterType());
-        register(new DenSpawnBroadcasterType());
+        register(new MaxRaidBroadcasterType());
+        register(new TeraRaidBroadcasterType());
     }
 
     public static void register(BroadcasterType type) {
