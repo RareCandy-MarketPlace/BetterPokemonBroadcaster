@@ -17,6 +17,7 @@ public class BroadcasterTypeRegistry {
         register(new FleeBroadcasterType());
         register(new MaxRaidBroadcasterType());
         register(new TeraRaidBroadcasterType());
+        register(new DespawnBroadcasterType());
     }
 
     public static void register(BroadcasterType type) {

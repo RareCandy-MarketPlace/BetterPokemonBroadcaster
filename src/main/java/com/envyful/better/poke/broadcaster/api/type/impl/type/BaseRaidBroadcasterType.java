@@ -95,24 +95,18 @@ public abstract class BaseRaidBroadcasterType extends AbstractBroadcasterType<Ra
     }
 
     protected boolean isTeraRaid(RandomizeRaidEvent.SelectSpawnsEvent event) {
-        net.minecraft.world.entity.Entity den = (net.minecraft.world.entity.Entity) event.getDen();
-        if (den == null) return false;
-
-        String descId = den.getType().getDescriptionId().toLowerCase();
-        if (descId.contains("tera")) return true;
-
-        if (den.getClass().getSimpleName().toLowerCase().contains("tera")) return true;
-
         try {
+            net.minecraft.world.entity.Entity den = (net.minecraft.world.entity.Entity) event.getDen();
+            if (den == null) return false;
+
             net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
             den.saveWithoutId(tag);
-            if (tag.contains("isTera") && tag.getBoolean("isTera")) return true;
-            if (tag.contains("Tera") && tag.getBoolean("Tera")) return true;
-            if (tag.contains("RaidData")) {
-                net.minecraft.nbt.CompoundTag rd = tag.getCompound("RaidData");
-                if (rd.contains("isTera") && rd.getBoolean("isTera")) return true;
-                if (rd.contains("tera") && rd.getBoolean("tera")) return true;
+
+            if (tag.contains("RaidType")) {
+                String raidType = tag.getString("RaidType").toLowerCase();
+                return raidType.contains("tera");
             }
+
         } catch (Exception ignored) {}
 
         return false;

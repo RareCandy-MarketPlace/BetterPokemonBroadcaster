@@ -3,6 +3,7 @@ package com.envyful.better.poke.broadcaster.config;
 import com.envyful.api.config.yaml.AbstractYamlConfig;
 import com.envyful.api.discord.yaml.DiscordWebHookConfig;
 import com.envyful.api.text.Placeholder;
+import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.envyful.better.poke.broadcaster.api.util.WebhookQueue;
 import com.pixelmonmod.api.pokemon.PokemonSpecification;
 import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
@@ -87,7 +88,13 @@ public class BroadcastOption extends AbstractYamlConfig {
         }
 
         public Builder spec(String spec) {
-            this.pokemonSpec = PokemonSpecificationProxy.create(spec).get();
+            var attempt = PokemonSpecificationProxy.create(spec);
+            if (attempt.wasSuccess()) {
+                this.pokemonSpec = attempt.get();
+            } else {
+                BetterPokeBroadcaster.getLogger().warn("Invalid Pokemon specification found, falling back to any: " + spec);
+                this.pokemonSpec = PokemonSpecificationProxy.create("").get();
+            }
             return this;
         }
 

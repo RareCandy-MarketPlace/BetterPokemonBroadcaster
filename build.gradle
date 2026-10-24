@@ -51,7 +51,8 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
-    setArchiveBaseName('BetterPokeBroadcaster-NeoForge-2.1.1-1.21.1')
+    setArchiveBaseName('BetterPokeBroadcaster-NeoForge')
+    setArchiveVersion("${project.version}-1.21.1")
 
     relocate('org.apache.commons.jexl', 'com.envyful.better.poke.broadcaster.shade.jexl')
     relocate('org.spongepowered.configurate', 'com.envyful.better.poke.broadcaster.shade.configurate')
