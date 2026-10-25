@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compileOnly "com.envyful.papi:api:2.1.0"
-    compileOnly "curse.maven:pixelmon-389487:8894160"
+    compileOnly "curse.maven:pixelmon-389487:9285683"
 
     shadow group: 'org.spongepowered', name: 'configurate-yaml', version: '4.2.0-COMMENTS'
 

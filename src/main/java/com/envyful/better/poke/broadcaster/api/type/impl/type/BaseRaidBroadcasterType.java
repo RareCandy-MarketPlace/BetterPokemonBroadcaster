@@ -129,20 +129,52 @@ public abstract class BaseRaidBroadcasterType extends AbstractBroadcasterType<Ra
     protected Placeholder asEventPlaceholder(RandomizeRaidEvent.SelectSpawnsEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
         var den = event.getDen();
         var pokemon = resolveRaidPokemon(event);
-        String playerName = nearestPlayer == null ? "None" : nearestPlayer.getName().getString();
+
+        String playerName = "None";
+        if (nearestPlayer != null && nearestPlayer.getName() != null) {
+            playerName = nearestPlayer.getName().getString();
+            if (playerName == null) playerName = "None";
+        }
+
+        String worldName = "Unknown";
+        if (den.level() != null) {
+            worldName = UtilWorld.getName(den.level());
+            if (worldName == null) worldName = "Unknown";
+        }
+
+        String biomeName = "Unknown";
+        if (den.level() != null) {
+            try {
+                biomeName = BiomeHelper.getLocalizedBiomeName(den.level().getBiome(den.blockPosition())).getString();
+                if (biomeName == null) biomeName = "Unknown";
+            } catch (Exception ignored) {}
+        }
+
+        String pName = "Unknown";
+        if (pokemon != null && pokemon.getSpecies() != null) {
+            pName = pokemon.getSpecies().getName();
+            if (pName == null) pName = "Unknown";
+        }
+
+        String pNameLower = pName.toLowerCase().replace(" ", "");
+
+        final String finalPlayerName = playerName;
+        final String finalWorldName = worldName;
+        final String finalBiomeName = biomeName;
+        final String finalPName = pName;
 
         return Placeholder.composition(
                 PlaceholderCache.get(pokemon),
                 Placeholder.simple(line -> line
-                        .replace("%nearest_name%", playerName)
-                        .replace("%player%", playerName)
+                        .replace("%nearest_name%", finalPlayerName)
+                        .replace("%player%", finalPlayerName)
                         .replace("%x%", String.valueOf(den.getBlockX()))
                         .replace("%y%", String.valueOf(den.getBlockY()))
                         .replace("%z%", String.valueOf(den.getBlockZ()))
-                        .replace("%world%", UtilWorld.getName(den.level()))
-                        .replace("%pokemon%", pokemon != null ? pokemon.getSpecies().getName() : "Unknown")
-                        .replace("%pokemon_lower%", pokemon != null ? pokemon.getSpecies().getName().toLowerCase().replace(" ", "") : "unknown")
-                        .replace("%biome%", BiomeHelper.getLocalizedBiomeName(den.level().getBiome(den.blockPosition())).getString())
+                        .replace("%world%", finalWorldName)
+                        .replace("%pokemon%", finalPName)
+                        .replace("%pokemon_lower%", pNameLower)
+                        .replace("%biome%", finalBiomeName)
                 ));
     }
 
