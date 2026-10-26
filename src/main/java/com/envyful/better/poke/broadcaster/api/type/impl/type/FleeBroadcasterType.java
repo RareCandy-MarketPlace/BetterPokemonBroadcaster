@@ -6,19 +6,19 @@ import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
 import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.api.battles.BattleEndCause;
 import com.pixelmonmod.pixelmon.api.battles.BattleResults;
 import com.pixelmonmod.pixelmon.api.events.battles.BattleEndEvent;
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.util.helpers.BiomeHelper;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
+import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.WildPixelmonParticipant;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class FleeBroadcasterType extends AbstractBroadcasterType<BattleEndEvent> {
 
@@ -26,57 +26,127 @@ public class FleeBroadcasterType extends AbstractBroadcasterType<BattleEndEvent>
         super("flee", BattleEndEvent.class, Pixelmon.EVENT_BUS);
     }
 
-    @Override
-    protected boolean isEvent(BattleEndEvent event) {
-        PixelmonEntity entity = this.getEntity(event);
-        if (entity == null) {
-            return false;
-        }
+    private PixelmonEntity getFledWild(BattleEndEvent event) {
+        boolean playerInvolved = false;
+        boolean fled = false;
 
-        BattleResults result = this.getResult(event, EntityType.PLAYER);
-        if (result == null) {
-            return false;
-        }
-
-        return event.getCause() == BattleEndCause.FLEE;
-    }
-
-    public BattleResults getResult(BattleEndEvent event, EntityType<?> entityType) {
         for (Map.Entry<BattleParticipant, BattleResults> entry : event.getResults().entrySet()) {
-            if (Objects.equals(entityType, entry.getKey().getEntity().getType())) {
-                return entry.getValue();
+            if (entry.getKey() instanceof PlayerParticipant) {
+                playerInvolved = true;
+                if (entry.getValue().name().contains("FLEE")) fled = true;
+            } else if (entry.getValue().name().contains("FLEE")) {
+                fled = true;
+            }
+        }
+
+        if (!playerInvolved || !fled) return null;
+
+        for (BattleParticipant participant : event.getResults().keySet()) {
+            if (participant instanceof PlayerParticipant) continue;
+            if (participant.getClass().getSimpleName().toLowerCase().contains("raid")) continue;
+
+            if (participant instanceof WildPixelmonParticipant wildParticipant) {
+                if (wildParticipant.getEntity() instanceof PixelmonEntity pixelmonEntity) {
+                    return pixelmonEntity;
+                }
             }
         }
         return null;
     }
 
     @Override
+    protected boolean isEvent(BattleEndEvent event) {
+        return getFledWild(event) != null;
+    }
+
+    @Override
     protected PixelmonEntity getEntity(BattleEndEvent event) {
-        for (BattleParticipant battleParticipant : event.getResults().keySet()) {
-            if (battleParticipant instanceof WildPixelmonParticipant wild) {
-                return (PixelmonEntity) wild.getEntity();
-            }
+        return getFledWild(event);
+    }
+
+    @Override
+    public Pokemon getPokemon(Event e) {
+        if (e instanceof BattleEndEvent event) {
+            PixelmonEntity entity = getFledWild(event);
+            if (entity != null) return entity.getPokemon();
         }
         return null;
     }
 
     @Override
     protected Placeholder asEventPlaceholder(BattleEndEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
+        Pokemon pokemon = pixelmon != null ? pixelmon.getPokemon() : null;
+
+        String playerName = "Unknown";
+        if (nearestPlayer != null && nearestPlayer.getName() != null) {
+            playerName = nearestPlayer.getName().getString();
+        } else {
+            for (BattleParticipant p : event.getResults().keySet()) {
+                if (p instanceof PlayerParticipant playerParticipant) {
+                    ServerPlayer sp = playerParticipant.getPlayer();
+                    if (sp != null && sp.getName() != null) {
+                        playerName = sp.getName().getString();
+                        break;
+                    }
+                }
+            }
+        }
+        if (playerName == null) playerName = "Unknown";
+
+        String worldName = "Unknown";
+        String biomeName = "Unknown";
+        double x = 0, y = 0, z = 0;
+
+        if (pixelmon != null && pixelmon.level() != null) {
+            worldName = UtilWorld.getName(pixelmon.level());
+            if (worldName == null) worldName = "Unknown";
+            try {
+                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString();
+                if (biomeName == null) biomeName = "Unknown";
+            } catch (Exception ignored) {}
+            x = pixelmon.getX();
+            y = pixelmon.getY();
+            z = pixelmon.getZ();
+        }
+
+        String pName = "Unknown";
+        if (pokemon != null && pokemon.getSpecies() != null) {
+            pName = pokemon.getSpecies().getName();
+            if (pName == null) pName = "Unknown";
+        }
+        String pNameLower = pName.toLowerCase().replace(" ", "");
+
+        final String fPlayerName = playerName;
+        final String fWorldName = worldName;
+        final String fBiomeName = biomeName;
+        final String fPName = pName;
+        final String fX = String.valueOf((int) x);
+        final String fY = String.valueOf((int) y);
+        final String fZ = String.valueOf((int) z);
+
         return Placeholder.composition(
-                PlaceholderCache.get(pixelmon.getPokemon()),
+                PlaceholderCache.get(pokemon),
                 Placeholder.simple(line -> line
-                        .replace("%nearest_name%", nearestPlayer == null ? "None" : nearestPlayer.getName().getString())
-                        .replace("%x%", String.valueOf(pixelmon.getBlockX()))
-                        .replace("%y%", String.valueOf(pixelmon.getBlockY()))
-                        .replace("%z%", String.valueOf(pixelmon.getBlockZ()))
-                        .replace("%world%", UtilWorld.getName(pixelmon.level()))
-                        .replace("%pokemon%", pixelmon.getPokemonName())
-                        .replace("%biome%", BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString())));
+                        .replace("%nearest_name%", fPlayerName)
+                        .replace("%player%", fPlayerName)
+                        .replace("%x%", fX)
+                        .replace("%y%", fY)
+                        .replace("%z%", fZ)
+                        .replace("%world%", fWorldName)
+                        .replace("%pokemon%", fPName)
+                        .replace("%pokemon_lower%", pNameLower)
+                        .replace("%biome%", fBiomeName)
+                ));
     }
 
     @Override
     public ServerPlayer findNearestPlayer(BattleEndEvent event, PixelmonEntity entity, double range) {
-        return (ServerPlayer) entity.level().getNearestPlayer(entity, range);
+        for (BattleParticipant p : event.getResults().keySet()) {
+            if (p instanceof PlayerParticipant playerParticipant) {
+                return playerParticipant.getPlayer();
+            }
+        }
+        return null;
     }
 
     @SubscribeEvent

@@ -92,8 +92,8 @@ public class BroadcastOption extends AbstractYamlConfig {
             if (attempt.wasSuccess()) {
                 this.pokemonSpec = attempt.get();
             } else {
-                BetterPokeBroadcaster.getLogger().warn("Invalid Pokemon specification found, falling back to any: " + spec);
-                this.pokemonSpec = PokemonSpecificationProxy.create("").get();
+                BetterPokeBroadcaster.getLogger().error("[BetterPokeBroadcaster] CRITICAL: Invalid Pokemon Spec found -> " + spec + " <- This broadcast option has been disabled.");
+                this.pokemonSpec = null;
             }
             return this;
         }
