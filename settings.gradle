@@ -15,6 +15,4 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
 
-rootProject.name = 'neo21'
-//include 'forge16'
-include 'neo21'
+rootProject.name = 'BetterPokeBroadcaster'
