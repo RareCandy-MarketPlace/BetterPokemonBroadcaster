@@ -5,15 +5,18 @@ import com.envyful.api.text.Placeholder;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
 import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
+
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.SubscribeEvent;
+
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.events.spawning.SpawnEvent;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.util.helpers.BiomeHelper;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.SubscribeEvent;
 
 public class SpawnBroadcasterType extends AbstractBroadcasterType<SpawnEvent> {
 
@@ -62,9 +65,11 @@ public class SpawnBroadcasterType extends AbstractBroadcasterType<SpawnEvent> {
             worldName = UtilWorld.getName(pixelmon.level());
             if (worldName == null) worldName = "Unknown";
             try {
-                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString();
+                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition()))
+                        .getString();
                 if (biomeName == null) biomeName = "Unknown";
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             x = pixelmon.getX();
             y = pixelmon.getY();
             z = pixelmon.getZ();
@@ -87,8 +92,7 @@ public class SpawnBroadcasterType extends AbstractBroadcasterType<SpawnEvent> {
 
         return Placeholder.composition(
                 PlaceholderCache.get(pokemon),
-                Placeholder.simple(line -> line
-                        .replace("%nearest_name%", fPlayerName)
+                Placeholder.simple(line -> line.replace("%nearest_name%", fPlayerName)
                         .replace("%player%", fPlayerName)
                         .replace("%x%", fX)
                         .replace("%y%", fY)
@@ -96,8 +100,7 @@ public class SpawnBroadcasterType extends AbstractBroadcasterType<SpawnEvent> {
                         .replace("%world%", fWorldName)
                         .replace("%pokemon%", fPName)
                         .replace("%pokemon_lower%", pNameLower)
-                        .replace("%biome%", fBiomeName)
-                ));
+                        .replace("%biome%", fBiomeName)));
     }
 
     @Override

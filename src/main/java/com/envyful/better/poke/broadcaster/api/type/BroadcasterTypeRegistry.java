@@ -1,6 +1,12 @@
 package com.envyful.better.poke.broadcaster.api.type;
 
-import com.envyful.better.poke.broadcaster.api.type.impl.type.*;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.CaptureBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.DefeatBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.DespawnBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.FleeBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.MaxRaidBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.SpawnBroadcasterType;
+import com.envyful.better.poke.broadcaster.api.type.impl.type.TeraRaidBroadcasterType;
 import com.google.common.collect.Maps;
 
 import java.util.Locale;

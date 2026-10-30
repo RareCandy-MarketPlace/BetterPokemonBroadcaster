@@ -1,7 +1,10 @@
 plugins {
     id 'net.neoforged.moddev' version '2.0.148'
     id 'com.gradleup.shadow' version '9.6.1'
+    id 'com.diffplug.spotless' version '8.10.3'
 }
+
+version = "3.0.0"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -35,7 +38,7 @@ repositories {
 
 dependencies {
     compileOnly "com.envyful.papi:api:2.1.0"
-    compileOnly "curse.maven:pixelmon-389487:9285683"
+    compileOnly "curse.maven:pixelmon-389487:9285683" //Pixelmon 9.4.2
 
     shadow group: 'org.spongepowered', name: 'configurate-yaml', version: '4.2.0-COMMENTS'
 
@@ -48,11 +51,16 @@ dependencies {
     }
 }
 
-shadowJar {
+tasks.named('jar') {
+    enabled = false
+}
+
+tasks.named('shadowJar') {
     configurations = [project.configurations.shadow]
-    setArchiveClassifier('')
-    setArchiveBaseName('BetterPokeBroadcaster-NeoForge')
-    setArchiveVersion("${project.version}-1.21.1")
+
+    archiveBaseName = 'BetterPokeBroadcaster-NeoForge'
+    archiveVersion = "${project.version}-1.21.1"
+    archiveClassifier = ''
 
     relocate('org.apache.commons.jexl', 'com.envyful.better.poke.broadcaster.shade.jexl')
     relocate('org.spongepowered.configurate', 'com.envyful.better.poke.broadcaster.shade.configurate')
@@ -81,4 +89,22 @@ shadowJar {
     exclude "META-INF/services/**"
 }
 
-jar.finalizedBy('shadowJar')
+tasks.named('assemble') {
+    dependsOn(tasks.named('shadowJar'))
+}
+
+spotless {
+    java {
+        shortenFullyQualifiedTypes()
+        removeUnusedImports()
+        forbidWildcardImports()
+        forbidModuleImports()
+
+        cleanthat()
+
+        palantirJavaFormat()
+
+        importOrder('', '\\n', 'java|javax', '\\n', 'net.neoforged', '\\n', 'net.minecraft', '\\n', 'com.pixelmonmod', '\\n', '\\#')
+
+    }
+}

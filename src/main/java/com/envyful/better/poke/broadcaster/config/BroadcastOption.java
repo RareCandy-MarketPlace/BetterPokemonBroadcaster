@@ -5,11 +5,12 @@ import com.envyful.api.discord.yaml.DiscordWebHookConfig;
 import com.envyful.api.text.Placeholder;
 import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 import com.envyful.better.poke.broadcaster.api.util.WebhookQueue;
-import com.pixelmonmod.api.pokemon.PokemonSpecification;
-import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
+
+import com.pixelmonmod.api.pokemon.PokemonSpecification;
+import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
 
 @ConfigSerializable
 public class BroadcastOption extends AbstractYamlConfig {
@@ -92,7 +93,9 @@ public class BroadcastOption extends AbstractYamlConfig {
             if (attempt.wasSuccess()) {
                 this.pokemonSpec = attempt.get();
             } else {
-                BetterPokeBroadcaster.getLogger().error("[BetterPokeBroadcaster] CRITICAL: Invalid Pokemon Spec found -> " + spec + " <- This broadcast option has been disabled.");
+                BetterPokeBroadcaster.getLogger()
+                        .error("[BetterPokeBroadcaster] CRITICAL: Invalid Pokemon Spec found -> " + spec
+                                + " <- This broadcast option has been disabled.");
                 this.pokemonSpec = null;
             }
             return this;

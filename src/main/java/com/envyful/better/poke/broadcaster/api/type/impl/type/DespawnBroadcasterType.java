@@ -5,14 +5,17 @@ import com.envyful.api.text.Placeholder;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
 import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
-import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
-import com.pixelmonmod.pixelmon.api.util.helpers.BiomeHelper;
-import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
-import net.minecraft.server.level.ServerPlayer;
+
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import com.pixelmonmod.pixelmon.api.util.helpers.BiomeHelper;
+import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 
 public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveLevelEvent> {
 
@@ -27,7 +30,7 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
 
     @Override
     protected PixelmonEntity getEntity(EntityLeaveLevelEvent event) {
-        return (PixelmonEntity) event.getEntity();
+        return event.getEntity() instanceof PixelmonEntity pixelmon ? pixelmon : null;
     }
 
     @Override
@@ -41,7 +44,8 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
     }
 
     @Override
-    protected Placeholder asEventPlaceholder(EntityLeaveLevelEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
+    protected Placeholder asEventPlaceholder(
+            EntityLeaveLevelEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
         Pokemon pokemon = pixelmon != null ? pixelmon.getPokemon() : null;
 
         String playerName = "Unknown";
@@ -58,9 +62,11 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
             worldName = UtilWorld.getName(pixelmon.level());
             if (worldName == null) worldName = "Unknown";
             try {
-                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString();
+                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition()))
+                        .getString();
                 if (biomeName == null) biomeName = "Unknown";
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             x = pixelmon.getX();
             y = pixelmon.getY();
             z = pixelmon.getZ();
@@ -83,8 +89,7 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
 
         return Placeholder.composition(
                 PlaceholderCache.get(pokemon),
-                Placeholder.simple(line -> line
-                        .replace("%nearest_name%", fPlayerName)
+                Placeholder.simple(line -> line.replace("%nearest_name%", fPlayerName)
                         .replace("%player%", fPlayerName)
                         .replace("%x%", fX)
                         .replace("%y%", fY)
@@ -92,8 +97,7 @@ public class DespawnBroadcasterType extends AbstractBroadcasterType<EntityLeaveL
                         .replace("%world%", fWorldName)
                         .replace("%pokemon%", fPName)
                         .replace("%pokemon_lower%", pNameLower)
-                        .replace("%biome%", fBiomeName)
-                ));
+                        .replace("%biome%", fBiomeName)));
     }
 
     @Override

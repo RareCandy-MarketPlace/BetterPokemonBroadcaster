@@ -7,12 +7,7 @@ import com.envyful.api.command.annotate.permission.Permissible;
 import com.envyful.api.platform.Messageable;
 import com.envyful.better.poke.broadcaster.BetterPokeBroadcaster;
 
-@Command(
-        value = {
-                "pokebroadcaster",
-                "betterpokebroadcaster"
-        }
-)
+@Command(value = {"pokebroadcaster", "betterpokebroadcaster"})
 @Permissible("better.poke.broadcaster.reload")
 public class PokeBroadcasterCommand {
 

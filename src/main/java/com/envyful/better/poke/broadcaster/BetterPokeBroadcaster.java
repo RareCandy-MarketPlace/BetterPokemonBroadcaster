@@ -2,6 +2,7 @@ package com.envyful.better.poke.broadcaster;
 
 import com.envyful.api.concurrency.UtilLogger;
 import com.envyful.api.config.yaml.YamlConfigFactory;
+import com.envyful.api.neoforge.chat.ComponentTextFormatter;
 import com.envyful.api.neoforge.command.ForgeCommandFactory;
 import com.envyful.api.neoforge.platform.ForgePlatformHandler;
 import com.envyful.api.platform.PlatformProxy;
@@ -9,15 +10,16 @@ import com.envyful.better.poke.broadcaster.api.type.BroadcasterTypeRegistry;
 import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
 import com.envyful.better.poke.broadcaster.command.PokeBroadcasterCommand;
 import com.envyful.better.poke.broadcaster.config.BetterPokeBroadcasterConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
 
 @Mod(BetterPokeBroadcaster.MOD_ID)
 public class BetterPokeBroadcaster {
@@ -30,7 +32,7 @@ public class BetterPokeBroadcaster {
 
     public BetterPokeBroadcaster() {
         PlatformProxy.setHandler(ForgePlatformHandler.getInstance());
-        PlatformProxy.setTextFormatter(com.envyful.api.neoforge.chat.ComponentTextFormatter.getInstance());
+        PlatformProxy.setTextFormatter(ComponentTextFormatter.getInstance());
         UtilLogger.setLogger(LOGGER);
         instance = this;
         NeoForge.EVENT_BUS.register(this);
@@ -53,7 +55,8 @@ public class BetterPokeBroadcaster {
 
     @SubscribeEvent
     public void onCommandRegister(RegisterCommandsEvent event) {
-        this.commandFactory.registerCommand(event.getDispatcher(), this.commandFactory.parseCommand(new PokeBroadcasterCommand()));
+        this.commandFactory.registerCommand(
+                event.getDispatcher(), this.commandFactory.parseCommand(new PokeBroadcasterCommand()));
     }
 
     public static BetterPokeBroadcasterConfig getConfig() {

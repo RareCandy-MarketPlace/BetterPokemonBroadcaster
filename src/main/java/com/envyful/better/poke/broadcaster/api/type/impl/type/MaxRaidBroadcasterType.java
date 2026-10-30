@@ -2,8 +2,10 @@ package com.envyful.better.poke.broadcaster.api.type.impl.type;
 
 import com.envyful.api.concurrency.UtilConcurrency;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
-import com.pixelmonmod.pixelmon.api.events.raids.RandomizeRaidEvent;
+
 import net.neoforged.bus.api.SubscribeEvent;
+
+import com.pixelmonmod.pixelmon.api.events.raids.RandomizeRaidEvent;
 
 public class MaxRaidBroadcasterType extends BaseRaidBroadcasterType {
 

@@ -5,6 +5,14 @@ import com.envyful.api.text.Placeholder;
 import com.envyful.better.poke.broadcaster.api.type.impl.AbstractBroadcasterType;
 import com.envyful.better.poke.broadcaster.api.util.BroadcasterUtil;
 import com.envyful.better.poke.broadcaster.api.util.PlaceholderCache;
+
+import java.util.Map;
+
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.SubscribeEvent;
+
+import net.minecraft.server.level.ServerPlayer;
+
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.battles.BattleResults;
 import com.pixelmonmod.pixelmon.api.events.battles.BattleEndEvent;
@@ -14,11 +22,6 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipan
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.WildPixelmonParticipant;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.SubscribeEvent;
-
-import java.util.Map;
 
 public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEvent> {
 
@@ -28,15 +31,18 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
 
     private PixelmonEntity getDefeatedWild(BattleEndEvent event) {
         boolean playerWon = false;
-        for (Map.Entry<BattleParticipant, BattleResults> entry : event.getResults().entrySet()) {
-            if (entry.getKey() instanceof PlayerParticipant && entry.getValue().name().contains("VICTORY")) {
+        for (Map.Entry<BattleParticipant, BattleResults> entry :
+                event.getResults().entrySet()) {
+            if (entry.getKey() instanceof PlayerParticipant
+                    && entry.getValue().name().contains("VICTORY")) {
                 playerWon = true;
                 break;
             }
         }
         if (!playerWon) return null;
 
-        for (Map.Entry<BattleParticipant, BattleResults> entry : event.getResults().entrySet()) {
+        for (Map.Entry<BattleParticipant, BattleResults> entry :
+                event.getResults().entrySet()) {
             BattleParticipant participant = entry.getKey();
             if (participant instanceof PlayerParticipant) continue;
             if (participant.getClass().getSimpleName().toLowerCase().contains("raid")) continue;
@@ -73,7 +79,8 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
     }
 
     @Override
-    protected Placeholder asEventPlaceholder(BattleEndEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
+    protected Placeholder asEventPlaceholder(
+            BattleEndEvent event, PixelmonEntity pixelmon, ServerPlayer nearestPlayer) {
         Pokemon pokemon = pixelmon != null ? pixelmon.getPokemon() : null;
 
         String playerName = "Unknown";
@@ -100,9 +107,11 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
             worldName = UtilWorld.getName(pixelmon.level());
             if (worldName == null) worldName = "Unknown";
             try {
-                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition())).getString();
+                biomeName = BiomeHelper.getLocalizedBiomeName(pixelmon.level().getBiome(pixelmon.blockPosition()))
+                        .getString();
                 if (biomeName == null) biomeName = "Unknown";
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             x = pixelmon.getX();
             y = pixelmon.getY();
             z = pixelmon.getZ();
@@ -125,8 +134,7 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
 
         return Placeholder.composition(
                 PlaceholderCache.get(pokemon),
-                Placeholder.simple(line -> line
-                        .replace("%nearest_name%", fPlayerName)
+                Placeholder.simple(line -> line.replace("%nearest_name%", fPlayerName)
                         .replace("%player%", fPlayerName)
                         .replace("%x%", fX)
                         .replace("%y%", fY)
@@ -134,8 +142,7 @@ public class DefeatBroadcasterType extends AbstractBroadcasterType<BattleEndEven
                         .replace("%world%", fWorldName)
                         .replace("%pokemon%", fPName)
                         .replace("%pokemon_lower%", pNameLower)
-                        .replace("%biome%", fBiomeName)
-                ));
+                        .replace("%biome%", fBiomeName)));
     }
 
     @Override
